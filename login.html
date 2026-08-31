@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINANÇAS MIL - Entrar ou Cadastrar</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Importando a biblioteca oficial do Supabase para o navegador -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-body: radial-gradient(circle at top right, #0d1b2a, #050811);
+            --sidebar-bg: #0b1326;
+            --sidebar-border: rgba(0, 240, 255, 0.15);
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --gray-soft: #131c31;
+            --azul-marca: #00b4d8;
+            --azul-neon: #00f0ff;
+            --verde-destaque: #10b981;
+            --red-main: #ef4444;
+            --radius-lg: 18px;
+            --shadow-modal: 0 25px 35px -5px rgba(0, 0, 0, 0.7);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--bg-body); background-attachment: fixed; color: var(--text-main); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+
+        .login-card { background-color: var(--sidebar-bg); border: 1px solid var(--sidebar-border); width: 100%; max-width: 420px; border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-modal); }
+        
+        .brand-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
+        .logo-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #050b14, #101c36); border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--sidebar-border); color: var(--azul-neon); font-size: 20px; box-shadow: 0 0 15px rgba(0,240,255,0.2); }
+        .brand-title { font-size: 24px; font-weight: 800; color: #fff; }
+        .badge-mil { background: linear-gradient(135deg, var(--azul-marca), #7c3aed); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 6px; margin-left: 4px; }
+
+        .tab-auth { display: grid; grid-template-columns: 1fr 1fr; background: var(--gray-soft); padding: 4px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--sidebar-border); }
+        .tab-btn { padding: 10px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; background: none; color: var(--text-secondary); transition: 0.2s; }
+        .tab-btn.active { background: var(--azul-marca); color: #050b14; font-weight: 700; box-shadow: 0 0 10px rgba(0,180,216,0.3); }
+
+        .form-group { display: flex; flex-direction: column; margin-bottom: 16px; }
+        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; }
+        .form-input { width: 100%; padding: 12px 14px; border: 1px solid var(--sidebar-border); border-radius: 12px; font-size: 14px; outline: none; color: var(--text-main); background-color: var(--gray-soft); }
+        .form-input:focus { border-color: var(--azul-neon); box-shadow: 0 0 10px rgba(0,240,255,0.15); }
+
+        .btn-submit { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; color: #050b14; cursor: pointer; background: linear-gradient(135deg, var(--verde-destaque), #059669); box-shadow: 0 0 15px rgba(16,185,129,0.3); margin-top: 10px; transition: 0.2s; }
+        .btn-submit:hover { filter: brightness(1.15); }
+
+        .msg-feedback { font-size: 13px; text-align: center; margin-top: 14px; font-weight: 600; }
+        .msg-erro { color: var(--red-main); }
+        .msg-sucesso { color: var(--verde-destaque); }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="brand-header">
+            <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="brand-title">Finanças<span class="badge-mil">Mil</span></div>
+        </div>
+
+        <div class="tab-auth">
+            <button class="tab-btn active" id="btn-tab-login" onclick="alternarModo('login')">Entrar</button>
+            <button class="tab-btn" id="btn-tab-cadastro" onclick="alternarModo('cadastro')">Cadastrar</button>
+        </div>
+
+        <form id="form-auth" onsubmit="realizarAcaoAuth(event)">
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="auth-email" class="form-input" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="auth-senha" class="form-input" placeholder="••••••••" required>
+            </div>
+            <button type="submit" id="btn-acao-texto" class="btn-submit">Entrar no Sistema</button>
+            <div id="feedback-msg" class="msg-feedback"></div>
+        </form>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO DO SUPABASE (Substitua pelas suas chaves do painel)
+        const SUPABASE_URL = 'rghkcdvjrjdrxkedpajz';
+        const SUPABASE_ANON_KEY = 'us-east-1';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let modoAtual = 'login'; // 'login' ou 'cadastro'
+
+        function alternarModo(modo) {
+            modoAtual = modo;
+            const btnLogin = document.getElementById('btn-tab-login');
+            const btnCadastro = document.getElementById('btn-tab-cadastro');
+            const btnSubmit = document.getElementById('btn-acao-texto');
+            
+            document.getElementById('feedback-msg').innerText = '';
+
+            if (modo === 'login') {
+                btnLogin.className = 'tab-btn active';
+                btnCadastro.className = 'tab-btn';
+                btnSubmit.innerText = 'Entrar no Sistema';
+            } else {
+                btnLogin.className = 'tab-btn';
+                btnCadastro.className = 'tab-btn active';
+                btnSubmit.innerText = 'Criar Minha Conta';
+            }
+        }
+
+        async function realizarAcaoAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const senha = document.getElementById('auth-senha').value;
+            const feedback = document.getElementById('feedback-msg');
+
+            feedback.innerText = 'Processando...';
+            feedback.className = 'msg-feedback';
+
+            if (modoAtual === 'cadastro') {
+                // Cadastrar novo usuário
+                const { data, error } = await supabaseClient.auth.signUp({ email, senha });
+                if (error) {
+                    feedback.innerText = 'Erro ao cadastrar: ' + error.message;
+                    feedback.className = 'msg-feedback msg-erro';
+                } else {
+                    feedback.innerText = 'Cadastro realizado! Verifique seu e-mail ou faça login.';
+                    feedback.className = 'msg-feedback msg-sucesso';
+                }
+            } else {
+                // Fazer Login
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, senha });
+                if (error) {
+                    feedback.innerText = 'E-mail ou senha incorretos.';
+                    feedback.className = 'msg-feedback msg-erro';
+                } else {
+                    // Salvar o login na sessão e redirecionar para o painel principal
+                    sessionStorage.setItem('logado', 'true');
+                    sessionStorage.setItem('usuario_email', email);
+                    window.location.href = "index.html"; // Nome da página principal do painel
+                }
+            }
+        }
+    </script>
+</body>
+</html>
