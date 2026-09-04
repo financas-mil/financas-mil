@@ -84,13 +84,13 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO SUPABASE (Substitua pelas suas chaves do painel)
-        const SUPABASE_URL = 'vcajlennhkdyhzowiniw';
+        // URL CORRIGIDA COM O HTTPS E O SUPABASE.CO
+        const SUPABASE_URL = 'https://vcajlennhkdyhzowiniw.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_RGaO70qAAdNguQOOEqx2hw_bGgsCrhe';
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let modoAtual = 'login'; // 'login' ou 'cadastro'
+        let modoAtual = 'login';
 
         function alternarModo(modo) {
             modoAtual = modo;
@@ -121,26 +121,23 @@
             feedback.className = 'msg-feedback';
 
             if (modoAtual === 'cadastro') {
-                // Cadastrar novo usuário
                 const { data, error } = await supabaseClient.auth.signUp({ email, senha });
                 if (error) {
                     feedback.innerText = 'Erro ao cadastrar: ' + error.message;
                     feedback.className = 'msg-feedback msg-erro';
                 } else {
-                    feedback.innerText = 'Cadastro realizado! Verifique seu e-mail ou faça login.';
+                    feedback.innerText = 'Cadastro realizado! Agora faça login.';
                     feedback.className = 'msg-feedback msg-sucesso';
+                    alternarModo('login');
                 }
             } else {
-                // Fazer Login
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email, senha });
                 if (error) {
                     feedback.innerText = 'E-mail ou senha incorretos.';
                     feedback.className = 'msg-feedback msg-erro';
                 } else {
-                    // Salvar o login na sessão e redirecionar para o painel principal
-                    sessionStorage.setItem('logado', 'true');
-                    sessionStorage.setItem('usuario_email', email);
-                    window.location.href = "index.html"; // Nome da página principal do painel
+                    // REDIRECIONA PARA O PAINEL CORRETO
+                    window.location.href = "painel.html";
                 }
             }
         }
