@@ -4,8 +4,8 @@
     <!-- Importando a biblioteca oficial do Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // CONFIGURAÇÃO DO SUPABASE (Substitua pelas suas chaves reais do painel)
-        const SUPABASE_URL = 'vcajlennhkdyhzowiniw';
+        // CONFIGURAÇÃO DO SUPABASE CORRIGIDA COM URL COMPLETA
+        const SUPABASE_URL = 'https://vcajlennhkdyhzowiniw.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_RGaO70qAAdNguQOOEqx2hw_bGgsCrhe';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -13,7 +13,7 @@
         async function verificarSessaoInicial() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
-                window.location.href = "login.html"; 
+                window.location.href = "index.html"; 
             }
         }
         verificarSessaoInicial();
@@ -1471,7 +1471,7 @@
         async function salvarTransacao(e) {
             e.preventDefault();
             const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) { window.location.href = 'login.html'; return; }
+            if (!user) { window.location.href = 'index.html'; return; }
 
             const tipo = document.getElementById('transacao-tipo').value;
             const descricao = document.getElementById('transacao-descricao').value;
@@ -2386,7 +2386,7 @@
         
         async function fazerLogoutReal() { 
             await supabaseClient.auth.signOut();
-            window.location.href = 'login.html'; 
+            window.location.href = 'index.html'; 
         }
 
         function limparTodosDados() { 
