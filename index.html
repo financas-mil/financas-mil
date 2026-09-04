@@ -3,142 +3,701 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FINANÇAS MIL - Entrar ou Cadastrar</title>
+    <title>Finanças MIL - Acesso</title>
+    
+    <!-- Importando a biblioteca oficial do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Importando a biblioteca oficial do Supabase para o navegador -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
-            --bg-body: radial-gradient(circle at top right, #0d1b2a, #050811);
-            --sidebar-bg: #0b1326;
-            --sidebar-border: rgba(0, 240, 255, 0.15);
+            --bg-global: #070a13;
+            --card-bg: #0b1329;
+            --blue-light: #00b4d8;
+            --blue-hover: #0096c7;
+            --purple-dark: #4c1d95;
             --text-main: #f8fafc;
             --text-secondary: #94a3b8;
-            --gray-soft: #131c31;
-            --azul-marca: #00b4d8;
-            --azul-neon: #00f0ff;
-            --verde-destaque: #10b981;
-            --red-main: #ef4444;
-            --radius-lg: 18px;
-            --shadow-modal: 0 25px 35px -5px rgba(0, 0, 0, 0.7);
+            --border-color: #1e293b;
+            --green-success: #10b981;
+            --red-error: #ef4444;
+            --orange-warn: #f59e0b;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--bg-body); background-attachment: fixed; color: var(--text-main); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
 
-        .login-card { background-color: var(--sidebar-bg); border: 1px solid var(--sidebar-border); width: 100%; max-width: 420px; border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-modal); }
-        
-        .brand-header { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
-        .logo-icon { width: 48px; height: 48px; background: linear-gradient(135deg, #050b14, #101c36); border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--sidebar-border); color: var(--azul-neon); font-size: 20px; box-shadow: 0 0 15px rgba(0,240,255,0.2); }
-        .brand-title { font-size: 24px; font-weight: 800; color: #fff; }
-        .badge-mil { background: linear-gradient(135deg, var(--azul-marca), #7c3aed); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 6px; margin-left: 4px; }
+        body {
+            background-color: var(--bg-global);
+            background-image: radial-gradient(circle at top right, rgba(8b, 55, 178, 0.15), transparent 400px),
+                              radial-gradient(circle at bottom left, rgba(0, 180, 216, 0.08), transparent 400px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-        .tab-auth { display: grid; grid-template-columns: 1fr 1fr; background: var(--gray-soft); padding: 4px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--sidebar-border); }
-        .tab-btn { padding: 10px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; background: none; color: var(--text-secondary); transition: 0.2s; }
-        .tab-btn.active { background: var(--azul-marca); color: #050b14; font-weight: 700; box-shadow: 0 0 10px rgba(0,180,216,0.3); }
+        .auth-card {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
 
-        .form-group { display: flex; flex-direction: column; margin-bottom: 16px; }
-        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; }
-        .form-input { width: 100%; padding: 12px 14px; border: 1px solid var(--sidebar-border); border-radius: 12px; font-size: 14px; outline: none; color: var(--text-main); background-color: var(--gray-soft); }
-        .form-input:focus { border-color: var(--azul-neon); box-shadow: 0 0 10px rgba(0,240,255,0.15); }
+        .brand-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
 
-        .btn-submit { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; color: #050b14; cursor: pointer; background: linear-gradient(135deg, var(--verde-destaque), #059669); box-shadow: 0 0 15px rgba(16,185,129,0.3); margin-top: 10px; transition: 0.2s; }
-        .btn-submit:hover { filter: brightness(1.15); }
+        .brand-icon-box {
+            background: linear-gradient(135deg, var(--purple-dark), var(--blue-light));
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 180, 216, 0.2);
+        }
 
-        .msg-feedback { font-size: 13px; text-align: center; margin-top: 14px; font-weight: 600; }
-        .msg-erro { color: var(--red-main); }
-        .msg-sucesso { color: var(--verde-destaque); }
+        .brand-icon-box i {
+            color: #ffffff;
+            font-size: 18px;
+        }
+
+        .brand-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-badge {
+            color: var(--blue-light);
+            font-weight: 800;
+        }
+
+        .brand-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.field-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .input-wrapper i.toggle-password {
+            position: absolute;
+            right: 14px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .input-wrapper i.toggle-password:hover {
+            color: var(--blue-light);
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px 14px 14px 42px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+            background-color: rgba(7, 10, 19, 0.4);
+            transition: all 0.2s;
+        }
+
+        .auth-input:focus {
+            border-color: var(--blue-light);
+            box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.15);
+            background-color: rgba(7, 10, 19, 0.7);
+        }
+
+        .forgot-password-link {
+            font-size: 12px;
+            color: var(--blue-light);
+            font-weight: 500;
+            text-align: right;
+            margin-top: 8px;
+            cursor: pointer;
+            align-self: flex-end;
+            text-decoration: none;
+        }
+
+        .forgot-password-link:hover {
+            text-decoration: underline;
+        }
+
+        .input-wrapper.match .auth-input {
+            border-color: var(--green-success);
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+        .input-wrapper.match i.field-icon {
+            color: var(--green-success);
+        }
+
+        .input-wrapper.mismatch .auth-input {
+            border-color: var(--red-error);
+            background-color: rgba(239, 68, 68, 0.05);
+        }
+        .input-wrapper.mismatch i.field-icon {
+            color: var(--red-error);
+        }
+
+        .btn-mil-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--blue-light), #0077b6);
+            color: #ffffff;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.25);
+        }
+
+        .btn-mil-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 180, 216, 0.35);
+            background: linear-gradient(135deg, #00c4ec, var(--blue-light));
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .auth-footer span {
+            color: var(--blue-light);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .auth-footer span:hover {
+            text-decoration: underline;
+        }
+
+        .password-strength-container {
+            margin-top: -12px;
+            margin-bottom: 16px;
+            display: none; 
+        }
+
+        .strength-bar-bg {
+            height: 4px;
+            background-color: var(--border-color);
+            border-radius: 2px;
+            margin-bottom: 6px;
+            overflow: hidden;
+        }
+
+        .strength-bar-fill {
+            width: 0%; 
+            height: 100%;
+            background-color: var(--red-error);
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .strength-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--red-error);
+            text-align: right;
+            display: block;
+        }
+
+        .requirements-list {
+            margin-bottom: 20px;
+            display: none; 
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .req-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary); 
+            font-weight: 500;
+        }
+
+        .req-item.valid {
+            color: var(--green-success);
+        }
+
+        .req-item i {
+            font-size: 11px;
+            width: 12px;
+            text-align: center;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .checkbox-wrapper input {
+            accent-color: var(--blue-light);
+            width: 16px;
+            height: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            background: var(--bg-global);
+            border: 1px solid var(--border-color);
+        }
+
+        .checkbox-wrapper label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            user-select: none;
+        }
+
+        .checkbox-wrapper label span {
+            color: var(--blue-light);
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div class="login-card">
-        <div class="brand-header">
-            <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
-            <div class="brand-title">Finanças<span class="badge-mil">Mil</span></div>
-        </div>
-
-        <div class="tab-auth">
-            <button class="tab-btn active" id="btn-tab-login" onclick="alternarModo('login')">Entrar</button>
-            <button class="tab-btn" id="btn-tab-cadastro" onclick="alternarModo('cadastro')">Cadastrar</button>
-        </div>
-
-        <form id="form-auth" onsubmit="realizarAcaoAuth(event)">
-            <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" id="auth-email" class="form-input" placeholder="seu@email.com" required>
+    <div class="auth-card">
+        
+        <div class="brand-container">
+            <div class="brand-icon-box">
+                <i class="fa-solid fa-chart-line"></i>
             </div>
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" id="auth-senha" class="form-input" placeholder="••••••••" required>
+            <div class="brand-title">Finanças <span class="brand-badge">MIL</span></div>
+        </div>
+        
+        <p class="brand-subtitle" id="auth-subtitle">Acesse sua inteligência patrimonial</p>
+
+        <form id="auth-form" onsubmit="tratarEnvio(event)">
+            
+            <div id="campos-login">
+                <div class="form-group">
+                    <label>E-mail institucional ou pessoal</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope field-icon"></i>
+                        <input type="email" id="login-email" class="auth-input" placeholder="seu@email.com">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha de acesso</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock field-icon"></i>
+                        <input type="password" id="login-senha" class="auth-input" placeholder="Digite sua senha">
+                        <i class="fa-regular fa-eye toggle-password" onclick="alternarVisibilidadeSenha('login-senha')"></i>
+                    </div>
+                    <span class="forgot-password-link" onclick="mudarTela('recuperar')">Esqueceu sua senha?</span>
+                </div>
             </div>
-            <button type="submit" id="btn-acao-texto" class="btn-submit">Entrar no Sistema</button>
-            <div id="feedback-msg" class="msg-feedback"></div>
+
+            <div id="campos-cadastro" style="display: none;">
+                <div class="form-group">
+                    <label>Nome completo</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user field-icon"></i>
+                        <input type="text" id="cad-nome" class="auth-input" placeholder="Seu nome">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Celular</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone field-icon"></i>
+                        <input type="text" id="cad-celular" class="auth-input" placeholder="(11) 99999-9999" oninput="mascaraCelular(this)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope field-icon"></i>
+                        <input type="email" id="cad-email" class="auth-input" placeholder="Digite seu e-mail">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock field-icon"></i>
+                        <input type="password" id="cad-senha" class="auth-input" placeholder="Digite sua senha" oninput="controlarRequisitosSenha(this)">
+                        <i class="fa-regular fa-eye toggle-password" onclick="alternarVisibilidadeSenha('cad-senha')"></i>
+                    </div>
+                </div>
+
+                <div class="password-strength-container">
+                    <div class="strength-bar-bg">
+                        <div class="strength-bar-fill"></div>
+                    </div>
+                    <span class="strength-label">Fraca</span>
+                </div>
+
+                <div class="requirements-list">
+                    <div class="req-item" id="req-caracteres"><i class="fa-regular fa-circle"></i> Mínimo 8 caracteres</div>
+                    <div class="req-item" id="req-maiuscula"><i class="fa-regular fa-circle"></i> Uma letra maiúscula</div>
+                    <div class="req-item" id="req-minuscula"><i class="fa-regular fa-circle"></i> Uma letra minúscula</div>
+                    <div class="req-item" id="req-numero"><i class="fa-regular fa-circle"></i> Um número</div>
+                    <div class="req-item" id="req-especial"><i class="fa-regular fa-circle"></i> Um caractere especial (!@#$...)</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmar senha</label>
+                    <div class="input-wrapper" id="wrapper-confirmar">
+                        <i class="fa-solid fa-lock field-icon" id="icone-confirmar"></i>
+                        <input type="password" id="cad-confirmar" class="auth-input" placeholder="Confirme sua senha" oninput="validarConfirmacaoSenha()">
+                        <i class="fa-regular fa-eye toggle-password" onclick="alternarVisibilidadeSenha('cad-confirmar')"></i>
+                    </div>
+                </div>
+
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="termos">
+                    <label for="termos">Li e aceito os <span>Termos de Uso</span> e a <span>Política de Privacidade</span>. *</label>
+                </div>
+
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="comunicacao" checked>
+                    <label for="comunicacao">Aceito receber novidades, promoções e cookies por e-mail ou WhatsApp.</label>
+                </div>
+            </div>
+
+            <div id="campos-recuperar" style="display: none;">
+                <div class="form-group">
+                    <label>E-mail cadastrado</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-envelope field-icon"></i>
+                        <input type="email" id="recuperar-email" class="auth-input" placeholder="seu@email.com">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="btn-submit" class="btn-mil-submit">Entrar</button>
         </form>
+
+        <div class="auth-footer" id="footer-alternar">
+            Não possui uma conta? <span onclick="mudarTela('cadastro')">Criar conta</span>
+        </div>
+
     </div>
 
     <script>
-        // URL CORRIGIDA COM O HTTPS E O SUPABASE.CO
+        // CONFIGURAÇÃO DO SUPABASE (Mesma do painel)
         const SUPABASE_URL = 'https://vcajlennhkdyhzowiniw.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_RGaO70qAAdNguQOOEqx2hw_bGgsCrhe';
-
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let modoAtual = 'login';
+        let telaAtual = 'login';
 
-        function alternarModo(modo) {
-            modoAtual = modo;
-            const btnLogin = document.getElementById('btn-tab-login');
-            const btnCadastro = document.getElementById('btn-tab-cadastro');
-            const btnSubmit = document.getElementById('btn-acao-texto');
-            
-            document.getElementById('feedback-msg').innerText = '';
-
-            if (modo === 'login') {
-                btnLogin.className = 'tab-btn active';
-                btnCadastro.className = 'tab-btn';
-                btnSubmit.innerText = 'Entrar no Sistema';
-            } else {
-                btnLogin.className = 'tab-btn';
-                btnCadastro.className = 'tab-btn active';
-                btnSubmit.innerText = 'Criar Minha Conta';
+        function alternarVisibilidadeSenha(idCampo) {
+            const campo = document.getElementById(idCampo);
+            if (campo) {
+                campo.type = campo.type === "password" ? "text" : "password";
             }
         }
 
-        async function realizarAcaoAuth(e) {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const senha = document.getElementById('auth-senha').value;
-            const feedback = document.getElementById('feedback-msg');
-
-            feedback.innerText = 'Processando...';
-            feedback.className = 'msg-feedback';
-
-            if (modoAtual === 'cadastro') {
-                const { data, error } = await supabaseClient.auth.signUp({ email, senha });
-                if (error) {
-                    feedback.innerText = 'Erro ao cadastrar: ' + error.message;
-                    feedback.className = 'msg-feedback msg-erro';
-                } else {
-                    feedback.innerText = 'Cadastro realizado! Agora faça login.';
-                    feedback.className = 'msg-feedback msg-sucesso';
-                    alternarModo('login');
-                }
+        function controlarRequisitosSenha(input) {
+            const containerBarra = document.querySelector('.password-strength-container');
+            const listaRequisitos = document.querySelector('.requirements-list');
+            const valor = input.value;
+            
+            if (valor.length > 0) {
+                containerBarra.style.display = 'block';
+                listaRequisitos.style.display = 'flex';
             } else {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, senha });
-                if (error) {
-                    feedback.innerText = 'E-mail ou senha incorretos.';
-                    feedback.className = 'msg-feedback msg-erro';
+                containerBarra.style.display = 'none';
+                listaRequisitos.style.display = 'none';
+                return;
+            }
+
+            const regras = {
+                caracteres: valor.length >= 8,
+                maiuscula: /[A-Z]/.test(valor),
+                minuscula: /[a-z]/.test(valor),
+                numero: /[0-9]/.test(valor),
+                especial: /[^A-Za-z0-9]/.test(valor)
+            };
+
+            let acertos = 0;
+
+            for (const [regra, valido] of Object.entries(regras)) {
+                const elemento = document.getElementById(`req-${regra}`);
+                const icone = elemento.querySelector('i');
+                
+                if (valido) {
+                    elemento.classList.add('valid');
+                    icone.className = 'fa-solid fa-check';
+                    acertos++;
                 } else {
-                    // REDIRECIONA PARA O PAINEL CORRETO
-                    window.location.href = "painel.html";
+                    elemento.classList.remove('valid');
+                    icone.className = 'fa-regular fa-circle';
                 }
+            }
+
+            const barraFill = document.querySelector('.strength-bar-fill');
+            const labelForca = document.querySelector('.strength-label');
+
+            if (acertos <= 2) {
+                barraFill.style.width = '33%';
+                barraFill.style.backgroundColor = 'var(--red-error)';
+                labelForca.innerText = 'Fraca';
+                labelForca.style.color = 'var(--red-error)';
+            } else if (acertos <= 4) {
+                barraFill.style.width = '66%';
+                barraFill.style.backgroundColor = 'var(--orange-warn)';
+                labelForca.innerText = 'Média';
+                labelForca.style.color = 'var(--orange-warn)';
+            } else {
+                barraFill.style.width = '100%';
+                barraFill.style.backgroundColor = 'var(--green-success)';
+                labelForca.innerText = 'Forte';
+                labelForca.style.color = 'var(--green-success)';
+            }
+
+            validarConfirmacaoSenha();
+        }
+
+        function validarConfirmacaoSenha() {
+            const senha = document.getElementById('cad-senha').value;
+            const confirmarInput = document.getElementById('cad-confirmar');
+            const confirmarValue = confirmarInput.value;
+            const wrapper = document.getElementById('wrapper-confirmar');
+            const icone = document.getElementById('icone-confirmar');
+
+            if (confirmarValue.length === 0) {
+                wrapper.classList.remove('match', 'mismatch');
+                icone.className = 'fa-solid fa-lock';
+                return;
+            }
+
+            if (senha === confirmarValue) {
+                wrapper.classList.add('match');
+                wrapper.classList.remove('mismatch');
+                icone.className = 'fa-solid fa-check';
+            } else {
+                wrapper.classList.add('mismatch');
+                wrapper.classList.remove('match');
+                icone.className = 'fa-solid fa-xmark';
+            }
+        }
+
+        function mudarTela(tela) {
+            telaAtual = tela;
+            const loginCampos = document.getElementById('campos-login');
+            const cadastroCampos = document.getElementById('campos-cadastro');
+            const recuperarCampos = document.getElementById('campos-recuperar');
+            const subtitle = document.getElementById('auth-subtitle');
+            const btnSubmit = document.getElementById('btn-submit');
+            const footerAlternar = document.getElementById('footer-alternar');
+
+            loginCampos.style.display = 'none';
+            cadastroCampos.style.display = 'none';
+            recuperarCampos.style.display = 'none';
+
+            if (tela === 'cadastro') {
+                cadastroCampos.style.display = 'block';
+                subtitle.innerText = 'Organize suas finanças de forma simples e eficiente';
+                btnSubmit.innerText = 'Concluir cadastro';
+                footerAlternar.innerHTML = 'Já tem uma conta? <span onclick="mudarTela(\'login\')">Fazer Login</span>';
+            } 
+            else if (tela === 'recuperar') {
+                recuperarCampos.style.display = 'block';
+                subtitle.innerText = 'Insira seu e-mail para redefinir sua senha de acesso';
+                btnSubmit.innerText = 'Enviar link de recuperação';
+                footerAlternar.innerHTML = 'Lembrou a senha? <span onclick="mudarTela(\'login\')">Voltar para o Login</span>';
+            } 
+            else {
+                loginCampos.style.display = 'block';
+                subtitle.innerText = 'Acesse sua inteligência patrimonial';
+                btnSubmit.innerText = 'Entrar';
+                footerAlternar.innerHTML = 'Não possui uma conta? <span onclick="mudarTela(\'cadastro\')">Criar conta</span>';
+                
+                const campoSenha = document.getElementById('cad-senha');
+                const campoConfirmar = document.getElementById('cad-confirmar');
+                if (campoSenha) campoSenha.value = '';
+                if (campoConfirmar) campoConfirmar.value = '';
+                controlarRequisitosSenha(campoSenha);
+            }
+        }
+
+        function mascaraCelular(input) {
+            let valor = input.value.replace(/\D/g, "");
+            if (valor.length > 11) valor = valor.slice(0, 11);
+            
+            if (valor.length > 6) {
+                input.value = `(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7)}`;
+            } else if (valor.length > 2) {
+                input.value = `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
+            } else if (valor.length > 0) {
+                input.value = `(${valor}`;
+            }
+        }
+
+        async function tratarEnvio(e) {
+            e.preventDefault();
+            
+            if (telaAtual === 'login') {
+                const emailLogin = document.getElementById('login-email').value.trim().toLowerCase();
+                const senhaLogin = document.getElementById('login-senha').value;
+
+                if (!emailLogin || !senhaLogin) {
+                    alert('Por favor, preencha todos os campos.');
+                    return;
+                }
+
+                // Autenticação real com o Supabase Auth
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: emailLogin,
+                    password: senhaLogin,
+                });
+
+                if (error) {
+                    alert('Erro ao entrar: ' + error.message);
+                    return;
+                }
+
+                if (data.session) {
+                    // Redireciona para o painel principal
+                    window.location.href = 'painel.html';
+                }
+            } 
+            else if (telaAtual === 'recuperar') {
+                const emailRecuperar = document.getElementById('recuperar-email').value.trim().toLowerCase();
+                if (!emailRecuperar) {
+                    alert('Por favor, digite um e-mail válido.');
+                    return;
+                }
+
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(emailRecuperar, {
+                    redirectTo: window.location.origin + '/painel.html',
+                });
+
+                if (error) {
+                    alert('Erro ao enviar recuperação: ' + error.message);
+                } else {
+                    alert('Instruções de recuperação enviadas para o seu e-mail!');
+                    mudarTela('login');
+                }
+            } 
+            else {
+                const nome = document.getElementById('cad-nome').value.trim();
+                const celular = document.getElementById('cad-celular').value.trim();
+                const email = document.getElementById('cad-email').value.trim().toLowerCase();
+                const senha = document.getElementById('cad-senha').value;
+                const confirmar = document.getElementById('cad-confirmar').value;
+                const termos = document.getElementById('termos').checked;
+
+                if (!nome || !celular || !email || !senha) {
+                    alert('Por favor, preencha todos os campos obrigatórios.');
+                    return;
+                }
+
+                if (!termos) {
+                    alert('Você precisa aceitar os Termos de Uso.');
+                    return;
+                }
+
+                const senhaValida = senha.length >= 8 && /[A-Z]/.test(senha) && /[a-z]/.test(senha) && /[0-9]/.test(senha) && /[^A-Za-z0-9]/.test(senha);
+                if (!senhaValida) {
+                    alert('Sua senha precisa atender a todas as exigências.');
+                    return;
+                }
+
+                if (senha !== confirmar) {
+                    alert('A confirmação de senha não confere.');
+                    return;
+                }
+
+                // Cadastro real com o Supabase Auth
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: senha,
+                    options: {
+                        data: {
+                            nome: nome,
+                            celular: celular
+                        }
+                    }
+                });
+
+                if (error) {
+                    alert('Erro ao criar conta: ' + error.message);
+                    return;
+                }
+
+                // Salva também os dados de perfil iniciais no Supabase se houver usuário
+                if (data.user) {
+                    await supabaseClient.from('perfis').upsert({
+                        user_id: data.user.id,
+                        nome: nome,
+                        email: email
+                    });
+                }
+
+                alert('Conta criada com sucesso! Faça login para acessar o painel.');
+                mudarLayoutSeNecessario = mudarTela('login');
             }
         }
     </script>
