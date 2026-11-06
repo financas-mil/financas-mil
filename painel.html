@@ -9,9 +9,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanças Mil">
     <meta name="theme-color" content="#0b1326">
-    <link rel="manifest" href="manifest.json">
-    
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230b1326'/><stop offset='100%' stop-color='%23101c36'/></linearGradient><linearGradient id='wave' x1='0%' y1='0%' x2='100%' y2='0%'><stop offset='0%' stop-color='%2300f0ff'/><stop offset='100%' stop-color='%237c3aed'/></linearGradient></defs><rect width='512' height='512' rx='110' fill='url(%23bg)'/><rect x='100' y='100' width='312' height='312' rx='70' fill='%23131c31' opacity='0.6' stroke='%2300f0ff' stroke-width='6'/><path d='M130 300 Q 200 200, 270 270 T 390 180' fill='none' stroke='url(%23wave)' stroke-width='24' stroke-linecap='round'/></svg>">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -480,10 +477,12 @@
                 <i class="fa-solid fa-broom"></i> Zerar Lançamentos
             </button>
 
-            <div class="section-tag">BALANÇO</div>
+            <div class="section-tag">NEXUS / INÍCIO</div>
             <div class="menu-item active" id="nav-balanco" onclick="trocarAba('balanco')">
-                <div class="menu-item-inner"><i class="fa-solid fa-chart-columns"></i> Balanço Mensal</div>
+                <div class="menu-item-inner"><i class="fa-solid fa-house"></i> Página Inicial (Painel)</div>
             </div>
+
+            <div class="section-tag">BALANÇO</div>
             <div class="menu-item" id="nav-balanco-anual" onclick="trocarAba('balanco-anual')">
                 <div class="menu-item-inner"><i class="fa-solid fa-calendar-days"></i> Balanço Anual</div>
             </div>
@@ -1165,7 +1164,6 @@
                         <option value="" disabled selected>Selecione uma categoria</option>
                         <option value="🏠 Moradia">🏠 Moradia</option>
                         <option value="🍔 Alimentação">🍔 Alimentação</option>
-			    		<option value="🛒 Supermercado"> 🛒 Supernercado</option>
                         <option value="🚗 Transporte">🚗 Transporte</option>
                         <option value="💊 Saúde">💊 Saúde</option>
                         <option value="📚 Educação">📚 Educação</option>
@@ -2047,7 +2045,6 @@
             }
         }
 
-        // --- EVENT LISTENER PARA O TECLADO NUMÉRICO ---
         document.addEventListener('keydown', function(event) {
             const modalCalc = document.getElementById('modal-calculadora');
             if (!modalCalc.classList.contains('active')) return;
@@ -2427,7 +2424,8 @@
         
         function fazerLogoutReal() {
             sessionStorage.removeItem('financas_mil_auth');
-            window.location.href = 'login.html';
+            alert("Sessão encerrada.");
+            location.reload();
         }
 
         function limparTodosDados() { 
