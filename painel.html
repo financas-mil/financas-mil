@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Finanças Mil">
     <meta name="theme-color" content="#0b1326">
+    <link rel="manifest" href="manifest.json">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230b1326'/><stop offset='100%' stop-color='%23101c36'/></linearGradient><linearGradient id='wave' x1='0%' y1='0%' x2='100%' y2='0%'><stop offset='0%' stop-color='%2300f0ff'/><stop offset='100%' stop-color='%237c3aed'/></linearGradient></defs><rect width='512' height='512' rx='110' fill='url(%23bg)'/><rect x='100' y='100' width='312' height='312' rx='70' fill='%23131c31' opacity='0.6' stroke='%2300f0ff' stroke-width='6'/><path d='M130 300 Q 200 200, 270 270 T 390 180' fill='none' stroke='url(%23wave)' stroke-width='24' stroke-linecap='round'/></svg>">
     
@@ -219,6 +220,11 @@
         .badge-table { padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
         .badge-table.in { background-color: var(--verde-soft); color: var(--verde-destaque); border: 1px solid rgba(16, 185, 129, 0.3); }
         .badge-table.out { background-color: var(--red-soft); color: var(--red-main); border: 1px solid rgba(239, 68, 68, 0.3); }
+        
+        .badge-status { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; display: inline-block; margin-left: 6px; }
+        .badge-status.pago { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-status.pendente { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+
         .actions-cell { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
         .btn-action-table { background: none; border: none; cursor: pointer; font-size: 14px; transition: 0.2s; }
         .btn-delete { color: #64748b; }
@@ -295,11 +301,6 @@
         .projecao-banner { background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(124, 58, 237, 0.1)); border: 1px solid var(--azul-marca); border-radius: var(--radius-lg); padding: 18px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-subtle); flex-wrap: wrap; gap: 15px; }
         .projecao-info h4 { font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
         .projecao-info .proj-val { font-size: 22px; font-weight: 800; color: var(--azul-neon); text-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
-
-        /* ORÇAMENTOS */
-        .orcamento-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .orcamento-card { background-color: var(--sidebar-bg); border: 1px solid var(--sidebar-border); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-subtle); }
-        .orcamento-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; font-weight: 700; color: var(--text-main); }
 
         /* OUTRAS SECÇÕES */
         .invest-kpi-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 220px; gap: 20px; margin-bottom: 30px; }
@@ -521,7 +522,7 @@
 
         <div class="sidebar-footer">
             <button type="button" class="btn-sair-sidebar" onclick="fazerLogoutReal()">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair / Recarregar
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
             </button>
         </div>
     </aside>
@@ -603,21 +604,21 @@
                     <div class="icon-badge"><i class="fa-solid fa-arrow-right"></i></div>
                 </div>
                 <div class="kpi-card card-receitas">
-                    <div class="info"><h3>Receitas</h3><div class="value monetario" id="total-receitas-val">R$ 0,00</div></div>
+                    <div class="info"><h3>Receitas (Efetivadas)</h3><div class="value monetario" id="total-receitas-val">R$ 0,00</div></div>
                     <div class="icon-badge"><i class="fa-solid fa-arrow-trend-up"></i></div>
                 </div>
                 <div class="kpi-card card-despesas">
-                    <div class="info"><h3>Despesas</h3><div class="value monetario" id="total-despesas-val">R$ 0,00</div></div>
+                    <div class="info"><h3>Despesas (Efetivadas)</h3><div class="value monetario" id="total-despesas-val">R$ 0,00</div></div>
                     <div class="icon-badge"><i class="fa-solid fa-arrow-trend-down"></i></div>
                 </div>
                 <div class="kpi-card card-saldo-atual">
-                    <div class="info"><h3>Saldo Atual</h3><div class="value monetario" id="total-saldo-val">R$ 0,00</div></div>
+                    <div class="info"><h3>Saldo Real</h3><div class="value monetario" id="total-saldo-val">R$ 0,00</div></div>
                     <div class="icon-badge"><i class="fa-solid fa-wallet"></i></div>
                 </div>
             </div>
 
             <div class="chart-wrapper-box">
-                <h2>Receitas vs Despesas</h2>
+                <h2>Receitas vs Despesas (Efetivadas)</h2>
                 <div style="width: 100%; height: 160px;"><canvas id="graficoFinancasMil"></canvas></div>
             </div>
 
@@ -1041,6 +1042,13 @@
                     <input type="date" id="transacao-data" class="modal-input" style="padding-left:14px;" required>
                 </div>
                 <div class="modal-form-group">
+                    <label>Status</label>
+                    <select id="transacao-status" class="modal-input" style="padding-left:14px;" required>
+                        <option value="Pago">✅ Pago / Recebido</option>
+                        <option value="Pendente">⏳ Pendente / A Vencer</option>
+                    </select>
+                </div>
+                <div class="modal-form-group">
                     <label>Categoria</label>
                     <select id="transacao-categoria" class="modal-input" style="padding-left:14px;" required>
                         <option value="" disabled selected>Selecione uma categoria</option>
@@ -1156,7 +1164,9 @@
                     <select id="gasto-categoria" class="modal-input" style="padding-left:14px;" required>
                         <option value="" disabled selected>Selecione uma categoria</option>
                         <option value="🏠 Moradia">🏠 Moradia</option>
+			<option value="🏠 Moradia">🏠 Moradia</option>
                         <option value="🍔 Alimentação">🍔 Alimentação</option>
+			<option value="🛒 Supermercado"> 🛒 Supernercado</option>
                         <option value="🚗 Transporte">🚗 Transporte</option>
                         <option value="💊 Saúde">💊 Saúde</option>
                         <option value="📚 Educação">📚 Educação</option>
@@ -1261,7 +1271,7 @@
         let gastosCartoes = [];
         let dividas = [];
         let investDados = { dinheiroInvestido: 0, rendimentos: 0 };
-        let orcamentosMetas = {}; // Ex: { "🍔 Alimentação": 800 }
+        let orcamentosMetas = {};
         
         let fotoPerfilTemp = '';
         let transacoesProcessadasPDFTemp = [];
@@ -1323,7 +1333,7 @@
             carregarPerfilUsuario();
             
             atualizarRelogioEDataPC();
-            setInterval(atualizarRelogioEDataPC, 1000); // Relógio em tempo real por segundo
+            setInterval(atualizarRelogioEDataPC, 1000);
 
             atualizarInterface();
             renderizarCartoesPagina();
@@ -1333,25 +1343,6 @@
             
             document.getElementById('transacao-data').value = new Date().toISOString().split('T')[0];
             document.getElementById('gasto-data').value = new Date().toISOString().split('T')[0];
-
-            window.addEventListener('keydown', (e) => {
-                const modalCalc = document.getElementById('modal-calculadora');
-                if (modalCalc.classList.contains('active')) {
-                    if (e.key >= '0' && e.key <= '9') {
-                        calcAddNum(e.key);
-                    } else if (['+', '-', '*', '/', '(', ')'].includes(e.key)) {
-                        calcOp(e.key);
-                    } else if (e.key === 'Enter' || e.key === '=') {
-                        e.preventDefault();
-                        calcResult();
-                    } else if (e.key === 'Backspace') {
-                        e.preventDefault();
-                        calcClear();
-                    } else if (e.key.toLowerCase() === 'c') {
-                        calcClear();
-                    }
-                }
-            });
         });
 
         function atualizarRelogioEDataPC() {
@@ -1381,7 +1372,8 @@
 
         function formatarMoeda(valor) {
             if (valoresOcultos) return "R$ •••••";
-            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const valNum = parseFloat(valor) || 0;
+            return valNum.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
         function mascaraMoeda(event) {
@@ -1456,12 +1448,13 @@
             const descricao = document.getElementById('transacao-descricao').value;
             const valor = converterMoedaParaNumero(document.getElementById('transacao-valor').value);
             const data = document.getElementById('transacao-data').value;
+            const status = document.getElementById('transacao-status').value;
             const horaAtual = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             const categoria = document.getElementById('transacao-categoria').value;
 
             if (!descricao || isNaN(valor) || valor <= 0 || !data || !categoria) return;
 
-            lancamentos.push({ id: Date.now(), descricao, valor, data, hora: horaAtual, categoria, tipo });
+            lancamentos.push({ id: Date.now(), descricao, valor, data, hora: horaAtual, categoria, tipo, status });
             salvarBancoLocal();
             
             document.getElementById('form-transacao').reset();
@@ -1678,7 +1671,7 @@
             const cartaoObj = cartoes.find(c => c.id === cartaoId);
             const nomeCartao = cartaoObj ? cartaoObj.nome : 'Cartão';
 
-            lancamentos.push({ id: Date.now() + 1, descricao: `${nomeCartao}: ${descricao}`, valor, data, hora: horaAtual, categoria, tipo: 'Despesa' });
+            lancamentos.push({ id: Date.now() + 1, descricao: `${nomeCartao}: ${descricao}`, valor, data, hora: horaAtual, categoria, tipo: 'Despesa', status: 'Pago' });
 
             salvarBancoLocal();
             fecharModal('modal-gasto-cartao');
@@ -1768,7 +1761,7 @@
 
             for (let t of transacoesProcessadasPDFTemp) {
                 gastosCartoes.push({ id: Date.now() + Math.random(), cartaoId, descricao: t.descricao, valor: t.valor, data: t.data, hora: horaAtual, categoria: t.categoria });
-                lancamentos.push({ id: Date.now() + Math.random(), descricao: `${nomeCartao}: ${t.descricao}`, valor: t.valor, data: t.data, hora: horaAtual, categoria: t.categoria, tipo: 'Despesa' });
+                lancamentos.push({ id: Date.now() + Math.random(), descricao: `${nomeCartao}: ${t.descricao}`, valor: t.valor, data: t.data, hora: horaAtual, categoria: t.categoria, tipo: 'Despesa', status: 'Pago' });
             }
 
             salvarBancoLocal();
@@ -1893,7 +1886,6 @@
             document.getElementById('dividas-juros-pagos').innerText = formatarMoeda(totalJuros);
         }
 
-        // METAS E ORÇAMENTOS POR CATEGORIA
         function abrirModalOrcamentos() {
             const container = document.getElementById('lista-inputs-orcamentos');
             container.innerHTML = '';
@@ -2056,6 +2048,39 @@
             }
         }
 
+        // --- EVENT LISTENER PARA O TECLADO NUMÉRICO ---
+        document.addEventListener('keydown', function(event) {
+            const modalCalc = document.getElementById('modal-calculadora');
+            if (!modalCalc.classList.contains('active')) return;
+
+            const key = event.key;
+
+            if (!isNaN(key) && key >= '0' && key <= '9') {
+                calcAddNum(key);
+                event.preventDefault();
+            }
+            else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                calcOp(key);
+                event.preventDefault();
+            }
+            else if (key.toLowerCase() === 'x') {
+                calcOp('*');
+                event.preventDefault();
+            }
+            else if (key === '(' || key === ')') {
+                calcOp(key);
+                event.preventDefault();
+            }
+            else if (key === 'Enter' || key === '=') {
+                calcResult();
+                event.preventDefault();
+            }
+            else if (key === 'Escape' || key === 'c' || key === 'C') {
+                calcClear();
+                event.preventDefault();
+            }
+        });
+
         function carregarPreviewFoto(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -2138,11 +2163,12 @@
             lancamentos.forEach(item => {
                 const itemDt = new Date(item.data + 'T00:00:00');
                 if (itemDt >= dtInicio && itemDt <= dtFim) {
-                    if (item.tipo === 'Receita') { catReceitas[item.categoria] = (catReceitas[item.categoria] || 0) + item.valor; totalRec += item.valor; }
+                    const valorNum = parseFloat(item.valor) || 0;
+                    if (item.tipo === 'Receita') { catReceitas[item.categoria] = (catReceitas[item.categoria] || 0) + valorNum; totalRec += valorNum; }
                     else if (item.tipo === 'Despesa') {
                         if (!cartoes.some(c => item.descricao.startsWith(c.nome + ':'))) {
-                            catDespesas[item.categoria] = (catDespesas[item.categoria] || 0) + item.valor; 
-                            totalDes += item.valor;
+                            catDespesas[item.categoria] = (catDespesas[item.categoria] || 0) + valorNum; 
+                            totalDes += valorNum;
                         }
                     }
                 }
@@ -2180,15 +2206,16 @@
                 const dt = new Date(item.data + 'T00:00:00');
                 if (dt.getFullYear() === anoExibicao) {
                     const m = dt.getMonth();
+                    const valorNum = parseFloat(item.valor) || 0;
                     if (item.tipo === 'Receita') { 
-                        dadosMeses[m].receitas += item.valor; 
-                        totalReceitasAno += item.valor; 
+                        dadosMeses[m].receitas += valorNum; 
+                        totalReceitasAno += valorNum; 
                     }
                     else if (item.tipo === 'Despesa') {
                         if (!cartoes.some(c => item.descricao.startsWith(c.nome + ':'))) {
-                            dadosMeses[m].despesas += item.valor; 
-                            totalDespesasAno += item.valor;
-                            categoriasDespesasMap[item.categoria] = (categoriasDespesasMap[item.categoria] || 0) + item.valor;
+                            dadosMeses[m].despesas += valorNum; 
+                            totalDespesasAno += valorNum;
+                            categoriasDespesasMap[item.categoria] = (categoriasDespesasMap[item.categoria] || 0) + valorNum;
                         }
                     }
                 }
@@ -2301,7 +2328,10 @@
 
         function atualizarInterface() {
             document.getElementById('mes-selecionado-texto').innerText = `${nomesMeses[mesExibicao]} de ${anoExibicao}`;
-            let acum = 0, rec = 0, desp = 0;
+            
+            let recEfetivadas = 0, despEfetivadas = 0;
+            let recPendentes = 0, despPendentes = 0;
+            
             const tbody = document.getElementById('tabela-lancamentos');
             tbody.innerHTML = '';
             const filtroTipo = document.getElementById('filtro-tabela').value;
@@ -2311,44 +2341,61 @@
             lancamentos.forEach(item => {
                 const d = new Date(item.data + 'T00:00:00');
                 if (d.getFullYear() === anoExibicao && d.getMonth() === mesExibicao) {
-                    if (item.tipo === 'Receita') {
-                        rec += item.valor;
-                    } else if (item.tipo === 'Despesa') {
-                        if (!cartoes.some(c => item.descricao.startsWith(c.nome + ':'))) {
-                            desp += item.valor;
+                    const valorNum = parseFloat(item.valor) || 0;
+
+                    if (item.status === 'Pago' || !item.status) {
+                        if (item.tipo === 'Receita') {
+                            recEfetivadas += valorNum;
+                        } else if (item.tipo === 'Despesa') {
+                            if (!cartoes.some(c => item.descricao.startsWith(c.nome + ':'))) {
+                                despEfetivadas += valorNum;
+                            }
+                        }
+                    } else {
+                        if (item.tipo === 'Receita') {
+                            recPendentes += valorNum;
+                        } else if (item.tipo === 'Despesa') {
+                            if (!cartoes.some(c => item.descricao.startsWith(c.nome + ':'))) {
+                                despPendentes += valorNum;
+                            }
                         }
                     }
 
                     if (filtroTipo !== 'Todos' && item.tipo !== filtroTipo) return;
 
                     let horaStr = item.hora ? ` <span style="font-size:11px; color:var(--text-secondary);">(${item.hora})</span>` : '';
+                    let statusBadge = item.status === 'Pendente' 
+                        ? `<span class="badge-status pendente">Pendente</span>` 
+                        : `<span class="badge-status pago">Pago</span>`;
 
                     tbody.innerHTML += `
                         <tr>
                             <td>${d.toLocaleDateString('pt-BR')}${horaStr}</td>
-                            <td><strong>${item.descricao}</strong></td>
+                            <td><strong>${item.descricao}</strong> ${statusBadge}</td>
                             <td>${item.categoria}</td>
                             <td><span class="badge-table ${item.tipo === 'Receita' ? 'in' : 'out'}">${item.tipo}</span></td>
-                            <td class="monetario" style="font-weight:700; color:${item.tipo === 'Receita' ? 'var(--verde-destaque)' : 'var(--red-main)'}">${formatarMoeda(item.valor)}</td>
+                            <td class="monetario" style="font-weight:700; color:${item.tipo === 'Receita' ? 'var(--verde-destaque)' : 'var(--red-main)'}">${formatarMoeda(valorNum)}</td>
                             <td class="actions-cell"><button class="btn-action-table btn-delete" onclick="excluirLancamento(${item.id})"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>
                     `;
                 }
             });
 
-            // Projeção de saldo ao final do mês
-            const hoje = new Date();
-            let diasNoMes = new Date(anoExibicao, mesExibicao + 1, 0).getDate();
-            let diaAtualDoMes = (hoje.getFullYear() === anoExibicao && hoje.getMonth() === mesExibicao) ? hoje.getDate() : diasNoMes;
-            let mediaGastoDiario = diaAtualDoMes > 0 ? (desp / diaAtualDoMes) : 0;
-            let projecaoFimMes = (rec - desp) - (mediaGastoDiario * (diasNoMes - diaAtualDoMes));
-            document.getElementById('projecao-saldo-val').innerText = formatarMoeda(projecaoFimMes);
+            const saldoReal = recEfetivadas - despEfetivadas;
+            const saldoProjetadoFinal = (recEfetivadas + recPendentes) - (despEfetivadas + despPendentes);
 
-            document.getElementById('saldo-anterior-val').innerText = formatarMoeda(acum);
-            document.getElementById('total-receitas-val').innerText = formatarMoeda(rec);
-            document.getElementById('total-despesas-val').innerText = formatarMoeda(desp);
-            document.getElementById('total-saldo-val').innerText = formatarMoeda(rec - desp);
-            renderizarGrafico(rec, desp);
+            document.getElementById('projecao-saldo-val').innerText = formatarMoeda(saldoProjetadoFinal);
+            document.getElementById('total-receitas-val').innerText = formatarMoeda(recEfetivadas);
+            document.getElementById('total-despesas-val').innerText = formatarMoeda(despEfetivadas);
+            
+            document.getElementById('total-saldo-val').innerHTML = `
+                ${formatarMoeda(saldoReal)}
+                <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500; margin-top: 4px;">
+                    Projeção Final: ${formatarMoeda(saldoProjetadoFinal)}
+                </div>
+            `;
+
+            renderizarGrafico(recEfetivadas, despEfetivadas);
         }
 
         function renderizarGrafico(rec, desp) {
@@ -2362,8 +2409,8 @@
         }
 
         function exportarCSV() {
-            let csv = 'Data;Hora;Descricao;Categoria;Tipo;Valor\n';
-            lancamentos.forEach(l => { csv += `${l.data};${l.hora || ''};${l.descricao};${l.categoria};${l.tipo};${l.valor}\n`; });
+            let csv = 'Data;Hora;Descricao;Categoria;Tipo;Valor;Status\n';
+            lancamentos.forEach(l => { csv += `${l.data};${l.hora || ''};${l.descricao};${l.categoria};${l.tipo};${l.valor};${l.status || 'Pago'}\n`; });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
@@ -2379,7 +2426,10 @@
         function alternarMenuDropdown(e) { e.stopPropagation(); document.getElementById('menu-usuario-dropdown').classList.toggle('active'); }
         function fecharDropdown() { document.getElementById('menu-usuario-dropdown').classList.remove('active'); }
         
-        function fazerLogoutReal() { location.reload(); }
+        function fazerLogoutReal() {
+            sessionStorage.removeItem('financas_mil_auth');
+            window.location.href = 'login.html';
+        }
 
         function limparTodosDados() { 
             if (confirm("Deseja apagar TODOS os dados locais permanentemente?")) { 
