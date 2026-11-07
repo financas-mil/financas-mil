@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='bg' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%230b1326'/><stop offset='100%' stop-color='%23101c36'/></linearGradient></defs><rect width='512' height='512' rx='110' fill='url(%23bg)'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%2300f0ff' font-size='280' font-family='Outfit, sans-serif' font-weight='bold'>F</text></svg>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FINANÇAS MIL - Painel de Controle</title>
@@ -479,7 +480,7 @@
 
             <div class="section-tag">NEXUS / INÍCIO</div>
             <div class="menu-item active" id="nav-balanco" onclick="trocarAba('balanco')">
-                <div class="menu-item-inner"><i class="fa-solid fa-house"></i> Página Inicial (Painel)</div>
+                <div class="menu-item-inner"><i class="fa-solid fa-house"></i> Página Inicial </div>
             </div>
 
             <div class="section-tag">BALANÇO</div>
@@ -1052,9 +1053,11 @@
                     <select id="transacao-categoria" class="modal-input" style="padding-left:14px;" required>
                         <option value="" disabled selected>Selecione uma categoria</option>
                         <option value="🏠 Moradia">🏠 Moradia</option>
+			<option value="🛒 Supermercado">🛒 Supermercado</option>
                         <option value="🍔 Alimentação">🍔 Alimentação</option>
                         <option value="🚗 Transporte">🚗 Transporte</option>
                         <option value="💊 Saúde">💊 Saúde</option>
+			<option value="🏋️ Academia">🏋️ Academia</option>
                         <option value="📚 Educação">📚 Educação</option>
                         <option value="🎮 Lazer">🎮 Lazer</option>
                         <option value="👕 Vestuário">👕 Vestuário</option>
@@ -1068,6 +1071,9 @@
                         <option value="💅 Beleza e Cuidados">💅 Beleza e Cuidados</option>
                         <option value="📺 Streaming/Apps">📺 Streaming/Apps</option>
                         <option value="💵 Salario">💵 Salario</option>
+			<option value="🎄 13ºSalario">🎄 13ºSalario</option>
+			<option value="🍽️ Vale Refeição"> 🍽️ Vale Refeição</option>
+			<option value="🥗 Vale Alimentação">🥗 Vale Alimentação</option>
                         <option value="📋 Dívidas">📋 Dívidas</option>
                         <option value="📦 Outros">📦 Outros</option>
                     </select>
@@ -1287,7 +1293,7 @@
         const abrevMeses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
         const categoriasListaFixa = [
-            "🏠 Moradia", "🍔 Alimentação", "🚗 Transporte", "💊 Saúde", "📚 Educação", 
+            "🏠 Moradia", "🛒 Supermercado","🍔 Alimentação", "🚗 Transporte", "💊 Saúde", "📚 Educação", 
             "🎮 Lazer", "👕 Vestuário", "🛍️ Compras", "💡 Serviços", "📱 Assinaturas", 
             "📋 Impostos", "🤲 Doações e Ofertas", "🐾 Pet", "✈️ Viagens", 
             "💅 Beleza e Cuidados", "📺 Streaming/Apps", "💵 Salario", "📋 Dívidas", "📦 Outros"
